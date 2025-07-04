@@ -1,10 +1,6 @@
 package com.company;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.company.model.Employee;
@@ -18,7 +14,7 @@ public class Main {
         String filePath = args != null && args.length > 0 ? args[0] : "src/main/resources/employee.csv";
         List<Employee> employees = CsvParser.readEmployeesFromCsvFilePath(filePath);
         EmployeeService employeeService = new EmployeeServiceImpl();
-        employeeService.loadEmployeesFromCsv(employees);
+        employeeService.loadEmployees(employees);
 
         System.out.println(
             "Employee with less salary " + employeeService.getUnderPaidManagerDetails(20));

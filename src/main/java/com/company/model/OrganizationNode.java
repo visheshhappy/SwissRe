@@ -1,6 +1,5 @@
 package com.company.model;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,7 @@ public class OrganizationNode {
     private OrganizationNode manager;
     private final List<OrganizationNode> directReports = new ArrayList<>();
     private int level;
-    private BigDecimal totalReporteesSalary = BigDecimal.ZERO;
+    // private BigDecimal totalReporteesSalary = BigDecimal.ZERO;
 
     public OrganizationNode(Employee employee) {
         this.employee = employee;
@@ -20,7 +19,7 @@ public class OrganizationNode {
         directReports.add(reportee);
         reportee.manager = this;
         reportee.updateLevel(this.level + 1);
-        totalReporteesSalary = totalReporteesSalary.add(reportee.getEmployee().getSalary());
+        //totalReporteesSalary = totalReporteesSalary.add(reportee.getEmployee().getSalary());
     }
 
     private void updateLevel(int newLevel) {
@@ -54,7 +53,7 @@ public class OrganizationNode {
         this.level = level;
     }
 
-    public BigDecimal getTotalReporteesSalary() {
+    /*public BigDecimal getTotalReporteesSalary() {
         return totalReporteesSalary;
-    }
+    }*/
 }
