@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.company.model.Employee;
-import com.company.model.ManagerSalaryComparison;
+import com.company.model.ManagerSalaryViolation;
 import com.company.service.EmployeeService;
 import com.company.service.impl.EmployeeServiceImpl;
 import com.company.util.CsvParser;
@@ -30,18 +30,18 @@ public class IntegrationTest {
         assertEquals(20, employees.size(), "Should load exactly 20 employees from test CSV");
 
         employeeService = new EmployeeServiceImpl();
-        employeeService.loadEmployeesFromCsv(employees);
+        employeeService.loadEmployees(employees);
     }
 
     @Test
     @DisplayName("Test end to end integration")
     void integrationTest() throws IOException {
-        List<ManagerSalaryComparison> underPaidManagers
+        List<ManagerSalaryViolation> underPaidManagers
             = employeeService.getUnderPaidManagerDetails(20);
         assertNotNull(underPaidManagers);
         assertFalse(underPaidManagers.isEmpty());
 
-        List<ManagerSalaryComparison> overPaidManagers = employeeService.getOverPaidManagerDetails(
+        List<ManagerSalaryViolation> overPaidManagers = employeeService.getOverPaidManagerDetails(
             50);
         assertNotNull(overPaidManagers);
         assertFalse(overPaidManagers.isEmpty());
@@ -52,18 +52,18 @@ public class IntegrationTest {
 
         assertEquals(7, longReportingLineEmployees.size());
 
-        for (ManagerSalaryComparison manager : underPaidManagers) {
+        for (ManagerSalaryViolation manager : underPaidManagers) {
             assertNotNull(manager.getEmployee().getId());
-            assertNotNull(manager.getUnderPaidAmount());
-            assertNotNull(manager.getUnderPaidPercentage());
-            assertTrue(manager.getUnderPaidAmount().compareTo(BigDecimal.ZERO) > 0);
+            assertNotNull(manager.getViolationAmount());
+            assertNotNull(manager.getViolationPercentage());
+            assertTrue(manager.getViolationAmount().compareTo(BigDecimal.ZERO) > 0);
         }
 
-        for (ManagerSalaryComparison manager : overPaidManagers) {
+        for (ManagerSalaryViolation manager : overPaidManagers) {
             assertNotNull(manager.getEmployee().getId());
-            assertNotNull(manager.getUnderPaidAmount());
-            assertNotNull(manager.getUnderPaidPercentage());
-            assertTrue(manager.getUnderPaidAmount().compareTo(BigDecimal.ZERO) > 0);
+            assertNotNull(manager.getViolationAmount());
+            assertNotNull(manager.getViolationPercentage());
+            assertTrue(manager.getViolationAmount().compareTo(BigDecimal.ZERO) > 0);
         }
     }
 

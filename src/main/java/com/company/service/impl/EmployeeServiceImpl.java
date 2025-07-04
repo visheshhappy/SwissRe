@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 
 import com.company.exception.BusinessException;
 import com.company.model.Employee;
-import com.company.model.ManagerSalaryComparison;
+import com.company.model.ManagerSalaryViolation;
+import com.company.model.ManagerSalaryViolation.ViolationType;
 import com.company.model.OrganizationNode;
 import com.company.service.EmployeeService;
 
@@ -24,7 +25,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     private OrganizationNode ceoNode = null;
 
     @Override
-    public void loadEmployeesFromCsv(List<Employee> employees) {
+    public void loadEmployees(List<Employee> employees) {
+
+        if(employees == null || employees.isEmpty()) {
+            throw new BusinessException("Employee list is empty");
+        }
+
         for (Employee employee : employees) {
             employeeMap.put(employee.getId(), employee);
             OrganizationNode node = new OrganizationNode(employee);
@@ -54,12 +60,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<ManagerSalaryComparison> getUnderPaidManagerDetails(int comparativePercentage) {
+    public List<ManagerSalaryViolation> getUnderPaidManagerDetails(int comparativePercentage) {
         return getManagersWithOutsideSalaryRange(comparativePercentage, false);
     }
 
     @Override
-    public List<ManagerSalaryComparison> getOverPaidManagerDetails(int comparativePercentage) {
+    public List<ManagerSalaryViolation> getOverPaidManagerDetails(int comparativePercentage) {
         return getManagersWithOutsideSalaryRange(comparativePercentage, true);
     }
 
@@ -82,9 +88,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             .orElseThrow(() -> new BusinessException("Employee Not found"));
     }
 
-    public List<ManagerSalaryComparison> getManagersWithOutsideSalaryRange(
+    public List<ManagerSalaryViolation> getManagersWithOutsideSalaryRange(
         int comparativePercentage, boolean checkOverpaid) {
-        List<ManagerSalaryComparison> managerDetailsWithOutsideSalaryRange = new ArrayList<>();
+        List<ManagerSalaryViolation> managerDetailsWithOutsideSalaryRange = new ArrayList<>();
 
         if (comparativePercentage < 0) {
             throw new BusinessException("ComparativePercentage cannot be negative");
@@ -126,10 +132,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .divide(thresholdSalary, 4, RoundingMode.HALF_UP)
                     .multiply(BigDecimal.valueOf(100));
 
-                managerDetailsWithOutsideSalaryRange.add(new ManagerSalaryComparison(
+                managerDetailsWithOutsideSalaryRange.add(new ManagerSalaryViolation(
                     manager,
                     salaryDifference,
-                    percentage
+                    percentage, checkOverpaid ? ViolationType.OVERPAID : ViolationType.UNDERPAID
                 ));
             }
         }
